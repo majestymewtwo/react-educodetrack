@@ -1,9 +1,10 @@
+import { RouterProvider } from "react-router"
+import router from "./router/appRouter"
+
 function App() {
 
   return (
-    <section>
-      <h2>EduCodeTrack</h2>
-    </section>
+    <RouterProvider router={router} />
   )
 }
 
