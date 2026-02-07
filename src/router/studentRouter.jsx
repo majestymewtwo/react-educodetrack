@@ -5,6 +5,7 @@ import Login from "@/pages/student/Login";
 import Dashboard from "@/pages/student/Dashboard";
 import Error404 from "@/pages/404";
 import StudentLayout from "@/components/student/StudentLayout";
+import Profile from "@/pages/student/Profile";
 
 const router = [
   {
@@ -20,15 +21,27 @@ const router = [
       },
       {
         path: "leaderboard",
-        element: <StudentLayout>
-          <Leaderboard />
-        </StudentLayout>,
+        element: (
+          <StudentLayout>
+            <Leaderboard />
+          </StudentLayout>
+        ),
       },
       {
         path: "dashboard",
-        element: <StudentLayout>
-          <Dashboard />
-        </StudentLayout>,
+        element: (
+          <StudentLayout>
+            <Dashboard />
+          </StudentLayout>
+        ),
+      },
+      {
+        path: "profile",
+        element: (
+          <StudentLayout>
+            <Profile />
+          </StudentLayout>
+        ),
       },
       {
         path: "*",
