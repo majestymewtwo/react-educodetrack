@@ -4,6 +4,7 @@ import Leaderboard from "@/pages/student/Leaderboard";
 import Login from "@/pages/student/Login";
 import Dashboard from "@/pages/student/Dashboard";
 import Error404 from "@/pages/404";
+import StudentLayout from "@/components/student/StudentLayout";
 
 const router = [
   {
@@ -19,11 +20,15 @@ const router = [
       },
       {
         path: "leaderboard",
-        element: <Leaderboard />,
+        element: <StudentLayout>
+          <Leaderboard />
+        </StudentLayout>,
       },
       {
         path: "dashboard",
-        element: <Dashboard />,
+        element: <StudentLayout>
+          <Dashboard />
+        </StudentLayout>,
       },
       {
         path: "*",

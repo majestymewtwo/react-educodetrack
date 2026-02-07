@@ -1,10 +1,14 @@
 import { RouterProvider } from "react-router"
 import router from "./router/appRouter"
+import { ToastContainer } from "react-toastify"
 
 function App() {
 
   return (
-    <RouterProvider router={router} />
+    <>
+      <RouterProvider router={router} />
+      <ToastContainer />
+    </>
   )
 }
 
