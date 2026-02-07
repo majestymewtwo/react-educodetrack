@@ -7,9 +7,11 @@ export default function Logout({ type }) {
   const handleLogout = () => {
     if (type === "student") {
       localStorage.removeItem("studentToken");
+      localStorage.removeItem("studentProfile");
       navigate("/student/login");
     } else {
       localStorage.removeItem("facultyToken");
+      localStorage.removeItem("facultyProfile");
       navigate("/faculty/login");
     }
     toast.success("Logged out successfully");
