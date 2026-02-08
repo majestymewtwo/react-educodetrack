@@ -45,7 +45,7 @@ export default function Login() {
       const studentProfile = data.student;
 
       localStorage.setItem("studentToken", studentToken);
-      localStorage.setItem("studentProfile", studentProfile);
+      localStorage.setItem("studentProfile", JSON.stringify(studentProfile));
 
       toast.success("OTP verified successfully");
       navigate("/student/dashboard");
@@ -62,7 +62,10 @@ export default function Login() {
   return (
     <section className="h-screen w-screen p-4 flex items-center justify-center bg-amber-400">
       <div className="w-full md:w-1/3 p-4 space-y-6 flex flex-col items-center border border-gray-300 shadow-xl rounded-lg bg-white">
-        <h1 className="font-semibold text-xl">EduCodeTrack</h1>
+        <div className="gap-1">
+          <img src="/student.png" alt="EduCodeTrack" className="size-24 ml-4" />
+          <h1 className="font-semibold text-xl">EduCodeTrack</h1>
+        </div>
         <p className="text-center italic">
           Track progress. Compare performance. <br /> Improve continuously.
         </p>
