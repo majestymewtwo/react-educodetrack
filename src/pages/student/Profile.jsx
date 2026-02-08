@@ -25,6 +25,16 @@ export default function Profile() {
     });
   };
 
+  const handlePlacementUpdate = (placed_details) => {
+    console.log(placed_details);
+    updateProfile({
+      ...profile,
+      placed_details: {
+        ...placed_details,
+      },
+    });
+  };
+
   const updateProfile = async (data) => {
     const SERVER_URL = import.meta.env.VITE_APP_SERVER_URL;
     try {
@@ -87,7 +97,12 @@ export default function Profile() {
         platform_details={profile.platform_details}
         handlePlatformUpdate={handlePlatformUpdate}
       />
-      <PlacementInfo />
+      {profile.is_placed && (
+        <PlacementInfo
+          placed_details={profile.placed_details}
+          handlePlacementUpdate={handlePlacementUpdate}
+        />
+      )}
     </section>
   );
 }
@@ -372,10 +387,105 @@ function PlatformInfo({ platform_details, handlePlatformUpdate }) {
   );
 }
 
-function PlacementInfo({ placed_details }) {
+function PlacementInfo({ placed_details, handlePlacementUpdate }) {
+  const [formData, setFormData] = useState({
+    company_name: "",
+    role_name: "",
+    company_type: "",
+    annual_compensation: "",
+  });
+
+  useEffect(() => {
+    if (placed_details) {
+      console.log(placed_details);
+      setFormData({
+        company_name: placed_details.company_name || "",
+        role_name: placed_details.role_name || "",
+        company_type: placed_details.company_type || "",
+        annual_compensation: placed_details.annual_compensation || "",
+      });
+    }
+  }, []);
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleUpdate = () => {
+    handlePlacementUpdate(formData);
+  };
+
   return (
     <div className="bg-white border border-slate-300 shadow-lg rounded-md p-4">
-      <h1 className="font-bold text-lg text-amber-600">Placement Info</h1>
+      <h1 className="font-bold text-lg text-amber-600 mb-4">Placement Info</h1>
+
+      {/* Company Name */}
+      <div className="flex flex-col gap-1 mb-3">
+        <label className="text-sm font-medium">Company Name</label>
+        <input
+          type="text"
+          name="company_name"
+          value={formData.company_name}
+          onChange={handleChange}
+          className="p-2 border border-slate-400 rounded-md focus:outline-amber-500"
+          placeholder="Enter company name"
+        />
+      </div>
+
+      {/* Role Name */}
+      <div className="flex flex-col gap-1 mb-3">
+        <label className="text-sm font-medium">Role Name</label>
+        <input
+          type="text"
+          name="role_name"
+          value={formData.role_name}
+          onChange={handleChange}
+          className="p-2 border border-slate-400 rounded-md focus:outline-amber-500"
+          placeholder="Enter role name"
+        />
+      </div>
+
+      {/* Company Type */}
+      <div className="flex flex-col gap-1 mb-3">
+        <label className="text-sm font-medium">Company Type</label>
+        <select
+          name="company_type"
+          value={formData.company_type}
+          onChange={handleChange}
+          className="p-2 border border-slate-400 rounded-md focus:outline-amber-500"
+        >
+          <option value="">Select type</option>
+          <option value="product-based">Product-based</option>
+          <option value="service-based">Service-based</option>
+        </select>
+      </div>
+
+      {/* Annual Compensation */}
+      <div className="flex flex-col gap-1 mb-4">
+        <label className="text-sm font-medium">Annual Compensation</label>
+        <select
+          name="annual_compensation"
+          value={formData.annual_compensation}
+          onChange={handleChange}
+          className="p-2 border border-slate-400 rounded-md focus:outline-amber-500"
+        >
+          <option value="">Select package</option>
+          <option value="3 - 5 lakhs">3 - 5 lakhs</option>
+          <option value="6 - 8 lakhs">6 - 8 lakhs</option>
+          <option value="9 - 12 lakhs">9 - 12 lakhs</option>
+          <option value="13 - 15 lakhs">13 - 15 lakhs</option>
+          <option value="15 - 20 lakhs">15 - 20 lakhs</option>
+          <option value="20 lakhs +">20 lakhs +</option>
+        </select>
+      </div>
+
+      {/* Update Button */}
+      <button
+        onClick={handleUpdate}
+        className="p-2 border border-slate-400 rounded-md bg-amber-400 hover:outline-amber-500 cursor-pointer w-full"
+      >
+        Update
+      </button>
     </div>
   );
 }
