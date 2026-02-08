@@ -1,6 +1,6 @@
 import Loader from "@/components/common/Loader";
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
 
 export default function Profile() {
@@ -15,6 +15,16 @@ export default function Profile() {
     });
   };
 
+  const handlePlatformUpdate = (platform_details) => {
+    updateProfile({
+      ...profile,
+      platform_details: {
+        ...profile.platform_details,
+        ...platform_details,
+      },
+    });
+  };
+
   const updateProfile = async (data) => {
     const SERVER_URL = import.meta.env.VITE_APP_SERVER_URL;
     try {
@@ -23,6 +33,7 @@ export default function Profile() {
           Authorization: `Bearer ${token}`,
         },
       });
+      toast.success("Updated profile");
       fetchProfile();
     } catch (err) {
       toast.error("An error occured");
@@ -72,7 +83,10 @@ export default function Profile() {
         department_name={profile.department_name}
         passout_year={profile.passout_year}
       />
-      <PlatformInfo />
+      <PlatformInfo
+        platform_details={profile.platform_details}
+        handlePlatformUpdate={handlePlatformUpdate}
+      />
       <PlacementInfo />
     </section>
   );
@@ -197,10 +211,163 @@ function EducationalInfo({ college_name, department_name, passout_year }) {
   );
 }
 
-function PlatformInfo({ platform_details }) {
+function PlatformInfo({ platform_details, handlePlatformUpdate }) {
+  const leetcodeRef = useRef();
+  const codechefRef = useRef();
+  const geeksforgeeksRef = useRef();
+  const skillrackRef = useRef();
+
+  useEffect(() => {
+    if (platform_details && platform_details.leetcode)
+      leetcodeRef.current.value = platform_details.leetcode;
+    if (platform_details && platform_details.codechef)
+      codechefRef.current.value = platform_details.codechef;
+    if (platform_details && platform_details.geeksforgeeks)
+      geeksforgeeksRef.current.value = platform_details.geeksforgeeks;
+    if (platform_details && platform_details.skillrack)
+      skillrackRef.current.value = platform_details.skillrack;
+  }, []);
+
   return (
     <div className="bg-white border border-slate-300 shadow-lg rounded-md p-4">
       <h1 className="font-bold text-lg text-amber-600">Platform Info</h1>
+      <div className="grid grid-cols-3 gap-3 p-4 items-center">
+        {/* Leetcode */}
+        <div className="flex gap-2 items-center p-4 justify-between col-span-3">
+          <img src="/leetcode.png" alt="leetcode" className="w-1/4" />
+          <div className="flex items-center gap-1 text-sm w-2/3">
+            <input
+              ref={leetcodeRef}
+              type="text"
+              placeholder="Leetcode username"
+              className="p-2 border border-slate-400 rounded-md w-full focus:outline-amber-500"
+            />
+            <div className="flex items-center gap-2">
+              {platform_details && platform_details.leetcode && (
+                <a
+                  href={`https://leetcode.com/u/${platform_details.leetcode}`}
+                  target="_blank"
+                  className="p-2 border-2 border-amber-400 rounded-md w-30 hover:bg-slate-100 cursor-pointer"
+                >
+                  View Profile
+                </a>
+              )}
+              <button
+                onClick={() => {
+                  handlePlatformUpdate({
+                    leetcode: leetcodeRef.current.value,
+                  });
+                }}
+                className="p-2 border border-slate-400 rounded-md w-20 bg-amber-400 hover:outline-amber-500 cursor-pointer"
+              >
+                Update
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Codechef */}
+        <div className="flex gap-2 items-center p-4 justify-between col-span-3">
+          <img src="/codechef.png" alt="codechef" className="w-1/4" />
+          <div className="flex items-center gap-1 text-sm w-2/3">
+            <input
+              ref={codechefRef}
+              type="text"
+              placeholder="Codechef username"
+              className="p-2 border border-slate-400 rounded-md w-full focus:outline-amber-500"
+            />
+            <div className="flex items-center gap-2">
+              {platform_details && platform_details.codechef && (
+                <a
+                  href={`https://codechef.com/users/${platform_details.codechef}`}
+                  target="_blank"
+                  className="p-2 border-2 border-amber-400 rounded-md w-30 hover:bg-slate-100 cursor-pointer"
+                >
+                  View Profile
+                </a>
+              )}
+              <button
+                onClick={() => {
+                  handlePlatformUpdate({
+                    codechef: codechefRef.current.value,
+                  });
+                }}
+                className="p-2 border border-slate-400 rounded-md w-20 bg-amber-400 hover:outline-amber-500 cursor-pointer"
+              >
+                Update
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* GeeksForGeeks */}
+        <div className="flex gap-2 items-center p-4 justify-between col-span-3">
+          <img src="/geeksforgeeks.png" alt="geeksforgeeks" className="w-1/4" />
+          <div className="flex items-center gap-1 text-sm w-2/3">
+            <input
+              ref={geeksforgeeksRef}
+              type="text"
+              placeholder="GeeksforGeeks username"
+              className="p-2 border border-slate-400 rounded-md w-full focus:outline-amber-500"
+            />
+            <div className="flex items-center gap-2">
+              {platform_details && platform_details.geeksforgeeks && (
+                <a
+                  href={`https://geeksforgeeks.org/user/${platform_details.geeksforgeeks}`}
+                  target="_blank"
+                  className="p-2 border-2 border-amber-400 rounded-md w-30 hover:bg-slate-100 cursor-pointer"
+                >
+                  View Profile
+                </a>
+              )}
+              <button
+                onClick={() => {
+                  handlePlatformUpdate({
+                    geeksforgeeks: geeksforgeeksRef.current.value,
+                  });
+                }}
+                className="p-2 border border-slate-400 rounded-md w-20 bg-amber-400 hover:outline-amber-500 cursor-pointer"
+              >
+                Update
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* SkillRack */}
+        <div className="flex gap-2 items-center p-4 justify-between col-span-3">
+          <img src="/skillrack.png" alt="skillrack" className="w-1/4" />
+          <div className="flex items-center gap-1 text-sm w-2/3">
+            <input
+              ref={skillrackRef}
+              type="text"
+              placeholder="Skillrack Profile"
+              className="p-2 border border-slate-400 rounded-md w-full focus:outline-amber-500"
+            />
+            <div className="flex items-center gap-2">
+              {platform_details && platform_details.skillrack && (
+                <a
+                  href={`${platform_details.skillrack}`}
+                  target="_blank"
+                  className="p-2 border-2 border-amber-400 rounded-md w-30 hover:bg-slate-100 cursor-pointer"
+                >
+                  View Profile
+                </a>
+              )}
+              <button
+                onClick={() => {
+                  handlePlatformUpdate({
+                    skillrack: skillrackRef.current.value,
+                  });
+                }}
+                className="p-2 border border-slate-400 rounded-md w-20 bg-amber-400 hover:outline-amber-500 cursor-pointer"
+              >
+                Update
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
