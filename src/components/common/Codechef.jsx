@@ -2,6 +2,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import Loader from "./Loader";
+import Analyze from "./Analyze";
 
 export default function Codechef({ isVisible, username, token }) {
   const [data, setData] = useState();
@@ -34,11 +35,17 @@ export default function Codechef({ isVisible, username, token }) {
 
   return (
     <div className={`${isVisible ? "block" : "hidden"} space-y-6 text-white`}>
-
       {/* Header */}
       <div className="flex items-center justify-between">
-        <h1 className="text-xl font-semibold text-black">CodeChef Performance</h1>
-        <div className="text-gray-400 text-sm">{data?.country}</div>
+        <h1 className="text-xl font-semibold text-black">
+          CodeChef Performance
+        </h1>
+        <Analyze
+          payload={username}
+          platform={"codechef"}
+          isFaculty={false}
+          token={token}
+        />
       </div>
 
       {/* Profile Card */}
@@ -49,7 +56,6 @@ export default function Codechef({ isVisible, username, token }) {
 
       {/* Rating + Stats */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-
         {/* Rating Card */}
         <div className="bg-gray-900 rounded-xl p-6 flex flex-col items-center justify-center">
           <div className="text-sm text-gray-400">Current Rating</div>
@@ -105,10 +111,7 @@ export default function Codechef({ isVisible, username, token }) {
 
         <div className="grid md:grid-cols-2 gap-4">
           {data?.badges?.map((badge, i) => (
-            <div
-              key={i}
-              className="border border-gray-800 rounded-lg p-4"
-            >
+            <div key={i} className="border border-gray-800 rounded-lg p-4">
               <div className="font-semibold">{badge.title}</div>
               <div className="text-sm text-gray-400 mt-1">
                 {badge.description}
@@ -117,7 +120,6 @@ export default function Codechef({ isVisible, username, token }) {
           ))}
         </div>
       </div>
-
     </div>
   );
 }

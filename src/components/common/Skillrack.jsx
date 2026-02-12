@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import Loader from "./Loader";
 import axios from "axios";
 import { toast } from "react-toastify";
+import Analyze from "./Analyze";
 
 export default function Skillrack({ isVisible, url, token }) {
   const [data, setData] = useState();
@@ -30,18 +31,24 @@ export default function Skillrack({ isVisible, url, token }) {
     fetchProfile();
   }, []);
 
-  
   const stats = data?.stats || {};
   const certificates = data?.certificates || [];
-  
+
   if (loading && isVisible) return <Loader />;
 
   return (
     <div className={`${isVisible ? "block" : "hidden"} space-y-6 text-white`}>
       {/* Header */}
       <div className="flex items-center justify-between">
-        <h1 className="text-xl font-semibold text-black">SkillRack Performance</h1>
-        <div className="text-gray-400 text-sm">Rank: {stats.RANK || "-"}</div>
+        <h1 className="text-xl font-semibold text-black">
+          SkillRack Performance
+        </h1>
+        <Analyze
+          payload={url}
+          platform={"skillrack"}
+          isFaculty={false}
+          token={token}
+        />
       </div>
 
       {/* Programs Solved Highlight */}

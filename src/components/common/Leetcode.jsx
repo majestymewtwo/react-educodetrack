@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import Loader from "./Loader";
 import { toast } from "react-toastify";
 import axios from "axios";
+import Analyze from "./Analyze";
 
 export default function Leetcode({ isVisible, username, token }) {
   const [data, setData] = useState();
@@ -10,11 +11,14 @@ export default function Leetcode({ isVisible, username, token }) {
 
   const fetchProfile = async () => {
     try {
-      const res = await axios.get(`${SERVER_URL}/api/track/leetcode/${username}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
+      const res = await axios.get(
+        `${SERVER_URL}/api/track/leetcode/${username}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         },
-      });
+      );
       setData(res.data);
     } catch (err) {
       toast.error("An error occured");
@@ -76,16 +80,21 @@ export default function Leetcode({ isVisible, username, token }) {
 
   return (
     <div className={`${isVisible ? "block" : "hidden"} space-y-6 text-white`}>
-
       {/* Header */}
       <div className="flex items-center justify-between">
-        <h1 className="text-xl font-semibold text-black">LeetCode Performance</h1>
-        <div className="text-sm text-gray-400">Ranking: {data?.ranking}</div>
+        <h1 className="text-xl font-semibold text-black">
+          LeetCode Performance
+        </h1>
+        <Analyze
+          payload={username}
+          platform={"leetcode"}
+          isFaculty={false}
+          token={token}
+        />
       </div>
 
       {/* Top Stats */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-
         {/* Circular Progress */}
         <div className="bg-gray-900  rounded-xl p-6 flex flex-col items-center">
           <svg width="160" height="160">
@@ -122,17 +131,23 @@ export default function Leetcode({ isVisible, username, token }) {
 
           <div className="flex justify-between text-green-400">
             <span>Easy</span>
-            <span>{data?.easySolved}/{data?.totalEasy}</span>
+            <span>
+              {data?.easySolved}/{data?.totalEasy}
+            </span>
           </div>
 
           <div className="flex justify-between text-yellow-400">
             <span>Medium</span>
-            <span>{data?.mediumSolved}/{data?.totalMedium}</span>
+            <span>
+              {data?.mediumSolved}/{data?.totalMedium}
+            </span>
           </div>
 
           <div className="flex justify-between text-red-400">
             <span>Hard</span>
-            <span>{data?.hardSolved}/{data?.totalHard}</span>
+            <span>
+              {data?.hardSolved}/{data?.totalHard}
+            </span>
           </div>
         </div>
 
@@ -155,10 +170,10 @@ export default function Leetcode({ isVisible, username, token }) {
               day.count > 8
                 ? "bg-green-500"
                 : day.count > 4
-                ? "bg-green-400"
-                : day.count > 0
-                ? "bg-green-700"
-                : "bg-gray-800";
+                  ? "bg-green-400"
+                  : day.count > 0
+                    ? "bg-green-700"
+                    : "bg-gray-800";
 
             return (
               <div

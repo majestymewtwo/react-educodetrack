@@ -2,6 +2,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import Loader from "./Loader";
+import Analyze from "./Analyze";
 
 export default function Geeksforgeeks({ isVisible, username, token }) {
   const [data, setData] = useState();
@@ -32,14 +33,16 @@ export default function Geeksforgeeks({ isVisible, username, token }) {
 
   const result = data?.problems?.result || {};
 
+  const basicProblems = result.Basic ? Object.values(result.Basic) : [];
   const easyProblems = result.Easy ? Object.values(result.Easy) : [];
   const mediumProblems = result.Medium ? Object.values(result.Medium) : [];
   const hardProblems = result.Hard ? Object.values(result.Hard) : [];
 
+  const basicCount = basicProblems.length;
   const easyCount = easyProblems.length;
   const mediumCount = mediumProblems.length;
   const hardCount = hardProblems.length;
-  const totalSolved = easyCount + mediumCount + hardCount;
+  const totalSolved = basicCount + easyCount + mediumCount + hardCount;
 
   const submissionMap = data?.submission?.result || {};
 
@@ -73,7 +76,12 @@ export default function Geeksforgeeks({ isVisible, username, token }) {
         <h1 className="text-xl font-semibold text-black">
           GeeksforGeeks performance
         </h1>
-        <div className="text-gray-400 text-sm">Total Solved: {totalSolved}</div>
+        <Analyze
+          payload={username}
+          platform={"geeksforgeeks"}
+          isFaculty={false}
+          token={token}
+        />
       </div>
 
       {/* Solved Circle */}
@@ -100,7 +108,12 @@ export default function Geeksforgeeks({ isVisible, username, token }) {
       </div>
 
       {/* Difficulty Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <div className="bg-gray-900 rounded-xl p-6">
+          <h2 className="text-blue-400 font-semibold">Basic</h2>
+          <p className="text-2xl font-bold mt-2">{basicCount}</p>
+        </div>
+
         <div className="bg-gray-900 rounded-xl p-6">
           <h2 className="text-green-400 font-semibold">Easy</h2>
           <p className="text-2xl font-bold mt-2">{easyCount}</p>
@@ -118,27 +131,27 @@ export default function Geeksforgeeks({ isVisible, username, token }) {
       </div>
 
       {/* Difficulty Distribution Bar */}
-      <div className="bg-gray-900 rounded-xl p-6">
-        <h2 className="font-semibold mb-4">Difficulty Distribution</h2>
-
-        <div className="w-full h-4 bg-gray-800 rounded-full overflow-hidden flex">
-          {totalSolved > 0 && (
-            <>
-              <div
-                className="bg-green-500"
-                style={{ width: `${(easyCount / totalSolved) * 100}%` }}
-              />
-              <div
-                className="bg-yellow-500"
-                style={{ width: `${(mediumCount / totalSolved) * 100}%` }}
-              />
-              <div
-                className="bg-red-500"
-                style={{ width: `${(hardCount / totalSolved) * 100}%` }}
-              />
-            </>
-          )}
-        </div>
+      <div className="w-full h-4 bg-gray-800 rounded-full overflow-hidden flex">
+        {totalSolved > 0 && (
+          <>
+            <div
+              className="bg-blue-500"
+              style={{ width: `${(basicCount / totalSolved) * 100}%` }}
+            />
+            <div
+              className="bg-green-500"
+              style={{ width: `${(easyCount / totalSolved) * 100}%` }}
+            />
+            <div
+              className="bg-yellow-500"
+              style={{ width: `${(mediumCount / totalSolved) * 100}%` }}
+            />
+            <div
+              className="bg-red-500"
+              style={{ width: `${(hardCount / totalSolved) * 100}%` }}
+            />
+          </>
+        )}
       </div>
 
       {/* Heatmap */}
@@ -168,7 +181,17 @@ export default function Geeksforgeeks({ isVisible, username, token }) {
       </div>
 
       {/* Problem Lists */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Basic */}
+        <div className="bg-gray-900 rounded-xl p-4 max-h-96 overflow-y-auto">
+          <h2 className="text-blue-400 font-semibold mb-3">Basic Problems</h2>
+          {basicProblems.map((p, i) => (
+            <div key={i} className="text-sm py-1 border-b border-gray-800">
+              {p.pname}
+            </div>
+          ))}
+        </div>
+
         {/* Easy */}
         <div className="bg-gray-900 rounded-xl p-4 max-h-96 overflow-y-auto">
           <h2 className="text-green-400 font-semibold mb-3">Easy Problems</h2>
