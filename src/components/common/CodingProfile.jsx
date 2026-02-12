@@ -11,6 +11,7 @@ export default function CodingProfile({
   skillrack,
 }) {
   const [activeTab, setActiveTab] = useState("leetcode");
+  const token = localStorage.getItem("studentToken");
 
   return (
     <section className="border-2 border-slate-300 shadow-lg bg-white rounded-lg">
@@ -40,14 +41,27 @@ export default function CodingProfile({
           active={activeTab}
         />
       </div>
-      <div className="p-4">
-        <Leetcode username={leetcode} isVisible={activeTab === "leetcode"} />
-        <Codechef username={codechef} isVisible={activeTab == "codechef"} />
+      <div className="p-4 min-h-screen">
+        <Leetcode
+          username={leetcode}
+          isVisible={activeTab === "leetcode"}
+          token={token}
+        />
+        <Codechef
+          username={codechef}
+          isVisible={activeTab == "codechef"}
+          token={token}
+        />
         <Geeksforgeeks
           username={geeksforgeeks}
           isVisible={activeTab == "geeksforgeeks"}
+          token={token}
         />
-        <Skillrack url={skillrack} isVisible={activeTab == "skillrack"} />
+        <Skillrack
+          url={skillrack}
+          isVisible={activeTab == "skillrack"}
+          token={token}
+        />
       </div>
     </section>
   );

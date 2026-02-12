@@ -18,7 +18,6 @@ export default function Dashboard() {
         },
       });
       const data = res.data;
-      console.log(data);
       setProfile(data.platform_details);
       setLoading(false);
     } catch (err) {
