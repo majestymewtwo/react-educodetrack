@@ -6,6 +6,7 @@ import Profile from "@/pages/faculty/Profile";
 import Register from "@/pages/faculty/Register";
 import Leaderboard from "@/pages/faculty/Leaderboard";
 import Error404 from "@/pages/404";
+import FacultyLayout from "@/components/faculty/FacultyLayout";
 
 const router = [
   {
@@ -25,15 +26,27 @@ const router = [
       },
       {
         path: "dashboard",
-        element: <Dashboard />,
+        element: (
+          <FacultyLayout>
+            <Dashboard />
+          </FacultyLayout>
+        ),
       },
       {
         path: "profile/:student_id",
-        element: <Profile />,
+        element: (
+          <FacultyLayout>
+            <Profile />
+          </FacultyLayout>
+        ),
       },
       {
         path: "leaderboard",
-        element: <Leaderboard />,
+        element: (
+          <FacultyLayout>
+            <Leaderboard />
+          </FacultyLayout>
+        ),
       },
       {
         path: "*",
