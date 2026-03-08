@@ -4,7 +4,7 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import Analyze from "./Analyze";
 
-export default function Skillrack({ isVisible, url, token }) {
+export default function Skillrack({ isVisible, url, token, isFaculty }) {
   const [data, setData] = useState();
   const [loading, setLoading] = useState(true);
   const SERVER_URL = import.meta.env.VITE_APP_SERVER_URL;
@@ -46,7 +46,7 @@ export default function Skillrack({ isVisible, url, token }) {
         <Analyze
           payload={url}
           platform={"skillrack"}
-          isFaculty={false}
+          isFaculty={isFaculty}
           token={token}
         />
       </div>

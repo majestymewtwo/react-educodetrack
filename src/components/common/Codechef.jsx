@@ -4,7 +4,7 @@ import { toast } from "react-toastify";
 import Loader from "./Loader";
 import Analyze from "./Analyze";
 
-export default function Codechef({ isVisible, username, token }) {
+export default function Codechef({ isVisible, username, token, isFaculty }) {
   const [data, setData] = useState();
   const [loading, setLoading] = useState(true);
   const SERVER_URL = import.meta.env.VITE_APP_SERVER_URL;
@@ -43,7 +43,7 @@ export default function Codechef({ isVisible, username, token }) {
         <Analyze
           payload={username}
           platform={"codechef"}
-          isFaculty={false}
+          isFaculty={isFaculty}
           token={token}
         />
       </div>

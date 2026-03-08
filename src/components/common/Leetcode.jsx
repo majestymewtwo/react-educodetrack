@@ -4,7 +4,7 @@ import { toast } from "react-toastify";
 import axios from "axios";
 import Analyze from "./Analyze";
 
-export default function Leetcode({ isVisible, username, token }) {
+export default function Leetcode({ isVisible, username, token, isFaculty }) {
   const [data, setData] = useState();
   const [loading, setLoading] = useState(true);
   const SERVER_URL = import.meta.env.VITE_APP_SERVER_URL;
@@ -88,7 +88,7 @@ export default function Leetcode({ isVisible, username, token }) {
         <Analyze
           payload={username}
           platform={"leetcode"}
-          isFaculty={false}
+          isFaculty={isFaculty}
           token={token}
         />
       </div>

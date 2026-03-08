@@ -9,9 +9,10 @@ export default function CodingProfile({
   codechef,
   geeksforgeeks,
   skillrack,
+  isFaculty = false
 }) {
   const [activeTab, setActiveTab] = useState("leetcode");
-  const token = localStorage.getItem("studentToken");
+  const token = localStorage.getItem(isFaculty ? "facultyToken" : "studentToken");
 
   return (
     <section className="border-2 border-slate-300 shadow-lg bg-white rounded-lg">
@@ -46,21 +47,25 @@ export default function CodingProfile({
           username={leetcode}
           isVisible={activeTab === "leetcode"}
           token={token}
+          isFaculty={isFaculty}
         />
         <Codechef
           username={codechef}
           isVisible={activeTab == "codechef"}
           token={token}
+          isFaculty={isFaculty}
         />
         <Geeksforgeeks
           username={geeksforgeeks}
           isVisible={activeTab == "geeksforgeeks"}
           token={token}
+          isFaculty={isFaculty}
         />
         <Skillrack
           url={skillrack}
           isVisible={activeTab == "skillrack"}
           token={token}
+          isFaculty={isFaculty}
         />
       </div>
     </section>

@@ -7,6 +7,6 @@ body {
 .text-outline {
   @apply text-shadow-[0_1px_10px_rgba(0,0,0,0.4)]
 }
-.insight-modal::-webkit-scrollbar {
+::-webkit-scrollbar {
   display: none;
 }
