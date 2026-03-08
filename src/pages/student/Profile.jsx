@@ -76,7 +76,7 @@ export default function Profile() {
   if (loading) return <Loader />;
 
   return (
-    <section className="space-y-5">
+    <section className="space-y-5 p-4">
       <h2 className="font-semibold text-3xl">Student Profile</h2>
       <PersonalInfo
         student_id={profile.student_id}

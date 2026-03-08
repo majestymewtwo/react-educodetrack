@@ -11,17 +11,25 @@ export default function Dashboard() {
   const years = Array.from({ length: 5 }, (_, i) => currentYear + i);
 
   // State Management
-  const [activeYear, setActiveYear] = useState(years[0]); // Default to current year
+  const [activeYear, setActiveYear] = useState(years[0]);
   const [data, setData] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
+  const [refreshKey, setRefreshKey] = useState(0); // Used to re-trigger data fetch
 
   // Track which departments are expanded: { "M.Tech CSE": true, "IT": false }
   const [expandedDepts, setExpandedDepts] = useState({});
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
-  // Fetch data whenever the active year changes
+  // Placement Confirmation Modal State
+  const [placementModal, setPlacementModal] = useState({
+    isOpen: false,
+    student: null,
+  });
+  const [isUpdatingPlacement, setIsUpdatingPlacement] = useState(false);
+
+  // Fetch data whenever the active year or refreshKey changes
   useEffect(() => {
     const fetchStats = async () => {
       setIsLoading(true);
@@ -35,7 +43,7 @@ export default function Dashboard() {
           `${SERVER_URL}/api/faculty/college-stats/${activeYear}`,
           {
             headers: {
-              Authorization: `Bearer ${token}`, // Assuming standard Bearer token format
+              Authorization: `Bearer ${token}`,
             },
           },
         );
@@ -50,7 +58,7 @@ export default function Dashboard() {
     };
 
     fetchStats();
-  }, [activeYear]);
+  }, [activeYear, refreshKey]);
 
   // Handle Accordion Toggle
   const toggleAccordion = (dept) => {
@@ -74,7 +82,6 @@ export default function Dashboard() {
         return fullName.includes(lowerQuery);
       });
 
-      // Only include the department if it has matching students
       if (matchingStudents.length > 0) {
         filtered[dept] = matchingStudents;
       }
@@ -83,18 +90,88 @@ export default function Dashboard() {
     return filtered;
   };
 
+  // Mark Student as Placed Action
+  const handleMarkAsPlaced = async () => {
+    if (!placementModal.student) return;
+    setIsUpdatingPlacement(true);
+
+    try {
+      const token = localStorage.getItem("facultyToken");
+      await axios.put(
+        `${SERVER_URL}/api/faculty/update-student`,
+        {
+          student_id: placementModal.student.student_id,
+          is_placed: true,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+
+      // Close modal and trigger a table refresh
+      setPlacementModal({ isOpen: false, student: null });
+      setRefreshKey((prev) => prev + 1);
+    } catch (err) {
+      alert(
+        err.response?.data?.message || "Failed to update placement status.",
+      );
+    } finally {
+      setIsUpdatingPlacement(false);
+    }
+  };
+
   const displayData = getFilteredData();
   const departmentNames = Object.keys(displayData);
 
   return (
-    <div className="bg-gray-900 min-h-full text-gray-200 mx-auto">
-      {/* Header & Search */}
+    <div className="bg-gray-900 min-h-full text-gray-200 mx-auto relative">
+      {/* Add Student Modal */}
       <AddStudentModal
         isOpen={isAddModalOpen}
         onClose={() => setIsAddModalOpen(false)}
-        onSuccess={() => setActiveYear(activeYear)}
+        onSuccess={() => setRefreshKey((prev) => prev + 1)}
       />
 
+      {/* Confirmation Modal for Marking as Placed */}
+      {placementModal.isOpen && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-gray-800 rounded-xl w-full max-w-md border border-gray-700 shadow-2xl p-6">
+            <h2 className="text-xl font-bold text-white mb-3">
+              Confirm Placement
+            </h2>
+            <p className="text-gray-300 mb-6 text-sm">
+              Are you sure you want to mark{" "}
+              <span className="font-semibold text-white">
+                {placementModal.student?.first_name}{" "}
+                {placementModal.student?.last_name}
+              </span>{" "}
+              as placed?
+            </p>
+            <div className="flex justify-end gap-3">
+              <button
+                onClick={() =>
+                  setPlacementModal({ isOpen: false, student: null })
+                }
+                disabled={isUpdatingPlacement}
+                className="px-4 py-2 rounded-lg bg-gray-700 text-gray-300 hover:bg-gray-600 hover:text-white transition-colors text-sm font-medium"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleMarkAsPlaced}
+                disabled={isUpdatingPlacement}
+                className="px-4 py-2 rounded-lg bg-green-600 text-white hover:bg-green-500 transition-colors flex items-center gap-2 text-sm font-medium disabled:opacity-50"
+              >
+                {isUpdatingPlacement ? "Updating..." : "Confirm & Mark Placed"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Header & Search */}
       <div className="flex flex-col md:flex-row md:items-center justify-between p-6 border-b border-gray-800 gap-4">
         <div>
           <h1 className="text-2xl font-bold text-white">College Statistics</h1>
@@ -104,15 +181,13 @@ export default function Dashboard() {
         </div>
 
         <div className="flex items-center gap-4">
-          {/* Add Student Modal */}
           <button
             onClick={() => setIsAddModalOpen(true)}
-            className="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2.5 rounded-lg text-sm font-medium transition-colors"
+            className="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2.5 rounded-lg text-sm font-medium transition-colors whitespace-nowrap"
           >
             + Add Student
           </button>
 
-          {/* Search Bar */}
           <div className="relative w-full md:w-72">
             <svg
               className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500"
@@ -210,7 +285,6 @@ export default function Dashboard() {
               key={dept}
               className="border border-gray-700 rounded-xl overflow-hidden bg-gray-800"
             >
-              {/* Accordion Header */}
               <button
                 onClick={() => toggleAccordion(dept)}
                 className="w-full flex items-center justify-between p-4 bg-gray-800 hover:bg-gray-750 transition-colors"
@@ -238,7 +312,6 @@ export default function Dashboard() {
                 </svg>
               </button>
 
-              {/* Accordion Body (Student Table) */}
               {expandedDepts[dept] && (
                 <div className="border-t border-gray-700 bg-gray-900/50 p-4 overflow-x-auto">
                   <table className="w-full text-left text-sm whitespace-nowrap">
@@ -247,8 +320,10 @@ export default function Dashboard() {
                         <th className="pb-3 px-4 font-medium">Student Name</th>
                         <th className="pb-3 px-4 font-medium">Register No</th>
                         <th className="pb-3 px-4 font-medium">Email</th>
-                        <th className="pb-3 px-4 font-medium">Phone</th>
                         <th className="pb-3 px-4 font-medium">Status</th>
+                        <th className="pb-3 px-4 font-medium text-right">
+                          Actions
+                        </th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-700/50">
@@ -266,9 +341,6 @@ export default function Dashboard() {
                           <td className="py-3 px-4 text-gray-400">
                             {student.email_id}
                           </td>
-                          <td className="py-3 px-4 text-gray-400">
-                            {student.phone_no}
-                          </td>
                           <td className="py-3 px-4">
                             <span
                               className={`px-2 py-1 rounded-md text-xs font-medium ${
@@ -280,14 +352,33 @@ export default function Dashboard() {
                               {student.is_placed ? "Placed" : "Not Placed"}
                             </span>
                           </td>
-                          <td className="py-3 px-4 text-right">
-                            <Link
-                              to={`/faculty/profile/${student.student_id}`}
-                              state={student}
-                              className="text-blue-400 hover:text-blue-300 font-medium hover:underline text-sm"
-                            >
-                              View Profile
-                            </Link>
+                          <td className="py-3 px-4 text-center">
+                            <div className="flex items-center justify-between gap-3">
+                              {!student.is_placed ? (
+                                <button
+                                  onClick={() =>
+                                    setPlacementModal({ isOpen: true, student })
+                                  }
+                                  className="cursor-pointer px-3 py-1 bg-green-500/10 text-green-400 hover:bg-green-500/20 border border-green-500/20 rounded-md text-xs font-medium transition-colors"
+                                >
+                                  Mark as Placed
+                                </button>
+                              ) : (
+                                <button
+                                  disabled
+                                  className="px-3 py-1 bg-slate-500/10 text-slate-400 hover:bg-slate-500/20 border border-slate-500/20 rounded-md text-xs font-medium transition-colors"
+                                >
+                                  Already Marked
+                                </button>
+                              )}
+                              <Link
+                                to={`/faculty/profile/${student.student_id}`}
+                                state={student}
+                                className="text-blue-400 hover:text-blue-300 font-medium hover:underline text-sm"
+                              >
+                                View Profile
+                              </Link>
+                            </div>
                           </td>
                         </tr>
                       ))}
