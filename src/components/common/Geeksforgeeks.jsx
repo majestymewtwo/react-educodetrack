@@ -4,25 +4,32 @@ import { toast } from "react-toastify";
 import Loader from "./Loader";
 import Analyze from "./Analyze";
 
-export default function Geeksforgeeks({ isVisible, username, token, isFaculty }) {
+export default function Geeksforgeeks({
+  isVisible,
+  username,
+  token,
+  isFaculty,
+}) {
   const [data, setData] = useState();
   const [loading, setLoading] = useState(true);
   const SERVER_URL = import.meta.env.VITE_APP_SERVER_URL;
 
   const fetchProfile = async () => {
-    try {
-      const res = await axios.get(
-        `${SERVER_URL}/api/track/geeksforgeeks/${username}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
+    if (username) {
+      try {
+        const res = await axios.get(
+          `${SERVER_URL}/api/track/geeksforgeeks/${username}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
           },
-        },
-      );
-      setData(res.data);
-    } catch (err) {
-      toast.error("An error occured");
-      console.error(err);
+        );
+        setData(res.data);
+      } catch (err) {
+        toast.error("An error occured");
+        console.error(err);
+      }
     }
     setLoading(false);
   };
@@ -68,6 +75,8 @@ export default function Geeksforgeeks({ isVisible, username, token, isFaculty })
   };
 
   if (loading && isVisible) return <Loader />;
+
+  if (isVisible && !username) return <h1>No Data Available</h1>;
 
   return (
     <div className={`${isVisible ? "block" : "hidden"} space-y-6 text-white`}>

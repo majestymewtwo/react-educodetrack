@@ -10,19 +10,21 @@ export default function Skillrack({ isVisible, url, token, isFaculty }) {
   const SERVER_URL = import.meta.env.VITE_APP_SERVER_URL;
 
   const fetchProfile = async () => {
-    try {
-      const res = await axios.get(
-        `${SERVER_URL}/api/track/skillrack?profileurl=${url}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
+    if (url) {
+      try {
+        const res = await axios.get(
+          `${SERVER_URL}/api/track/skillrack?profileurl=${url}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
           },
-        },
-      );
-      setData(res.data);
-    } catch (err) {
-      toast.error("An error occured");
-      console.error(err);
+        );
+        setData(res.data);
+      } catch (err) {
+        toast.error("An error occured");
+        console.error(err);
+      }
     }
     setLoading(false);
   };
@@ -35,6 +37,8 @@ export default function Skillrack({ isVisible, url, token, isFaculty }) {
   const certificates = data?.certificates || [];
 
   if (loading && isVisible) return <Loader />;
+
+  if (isVisible && !url) return <h1>No Data Available</h1>;
 
   return (
     <div className={`${isVisible ? "block" : "hidden"} space-y-6 text-white`}>

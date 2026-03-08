@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { Link } from "react-router";
+import AddStudentModal from "@/components/faculty/AddStudent";
 
 const SERVER_URL = import.meta.env.VITE_APP_SERVER_URL;
 
@@ -18,6 +19,7 @@ export default function Dashboard() {
 
   // Track which departments are expanded: { "M.Tech CSE": true, "IT": false }
   const [expandedDepts, setExpandedDepts] = useState({});
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
   // Fetch data whenever the active year changes
   useEffect(() => {
@@ -87,6 +89,12 @@ export default function Dashboard() {
   return (
     <div className="bg-gray-900 min-h-full text-gray-200 mx-auto">
       {/* Header & Search */}
+      <AddStudentModal
+        isOpen={isAddModalOpen}
+        onClose={() => setIsAddModalOpen(false)}
+        onSuccess={() => setActiveYear(activeYear)}
+      />
+
       <div className="flex flex-col md:flex-row md:items-center justify-between p-6 border-b border-gray-800 gap-4">
         <div>
           <h1 className="text-2xl font-bold text-white">College Statistics</h1>
@@ -95,28 +103,38 @@ export default function Dashboard() {
           </p>
         </div>
 
-        {/* Search Bar */}
-        <div className="relative w-full md:w-72">
-          <svg
-            className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
+        <div className="flex items-center gap-4">
+          {/* Add Student Modal */}
+          <button
+            onClick={() => setIsAddModalOpen(true)}
+            className="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2.5 rounded-lg text-sm font-medium transition-colors"
           >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+            + Add Student
+          </button>
+
+          {/* Search Bar */}
+          <div className="relative w-full md:w-72">
+            <svg
+              className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+              />
+            </svg>
+            <input
+              type="text"
+              placeholder="Search students by name..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full pl-10 pr-4 py-2.5 rounded-lg bg-gray-800 border border-gray-700 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all"
             />
-          </svg>
-          <input
-            type="text"
-            placeholder="Search students by name..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-10 pr-4 py-2.5 rounded-lg bg-gray-800 border border-gray-700 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all"
-          />
+          </div>
         </div>
       </div>
 
