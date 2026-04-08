@@ -6,6 +6,7 @@ export default function FacultyLayout({ children }) {
     <section className="flex">
       <SideBar />
       <ProtectedRoute type="faculty">{children}</ProtectedRoute>
+      
     </section>
   );
 }
